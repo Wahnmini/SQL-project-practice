@@ -1,0 +1,117 @@
+/*
+  create at laest 3 tables : reataurant
+  - manu
+  - staff
+  - pricelist
+  - transaction
+  write sql queries at least 3 queries
+  - with clause / subquery
+  - Where clause
+  - aggregate function & Group by
+*/ 
+https://replit.com/@Wahnmini/homeworksqldsb10wahn?v=1#main.sql
+
+-- Staff info --
+create table staff (
+  staff_id int,
+  names text,
+  position text
+);
+
+insert into staff values
+  (1, 'Tay', 'Manager'),
+  (2, 'New', 'Barista'),
+  (3, 'Gemini','Staff'),
+  (4, 'Fourth','Staff');
+.mode table
+.header on
+  
+  -- menu info --
+create table menu (
+  menu_id int,
+  menu_names text,
+  menu_price int
+);
+insert into menu values
+  (1, 'Americano',70),
+  (2, 'Latte', 75),    
+  (3, 'Matcha', 80),
+  (4, 'Brownie', 45),
+  (5, 'Cake', 40),
+  (6, 'Croissant', 65);
+.mode table
+.header on
+  
+  -- transaction list info --
+create table trans_list (
+  staff_id int,
+  trans_date date,
+  menu_names text,
+  quantity int
+);
+
+insert into trans_list values
+  (2, '2024-07-01', 'Latte', 10),
+  (2, '2024-07-01', 'Croissant', 20),
+  (3, '2024-07-02', 'Matcha', 15),
+  (3, '2024-07-02', 'Americano', 20),
+  (3, '2024-07-02', 'Croissant', 20),
+  (4, '2024-07-03', 'Americano', 30),
+  (4, '2024-07-03', 'Matcha', 10),
+  (4, '2024-07-03', 'Croissant', 10),
+  (3, '2024-07-04', 'Brownie', 5),
+  (3, '2024-07-04', 'Latte', 5);
+.mode table
+.header on
+  
+ 
+
+  -- to see which menu is sold more than 15 qty --
+select 
+      trans_list.trans_date,
+      menu.menu_names,
+      menu.menu_price as pri,
+      trans_list.quantity as qty,
+      menu.menu_price * trans_list.quantity as total
+  from menu
+  join trans_list on 
+  menu.menu_names = trans_list.menu_names
+  group by menu.menu_names
+  having sum(trans_list.quantity) > 15;
+
+-- to see which menu is sold the most in each day --
+select
+  menu_names,
+  max(total) as max_sales
+from (
+  select 
+      trans_list.trans_date as date,
+      menu.menu_names,
+      menu.menu_price * trans_list.quantity as total
+  from menu
+  join trans_list on 
+  menu.menu_names = trans_list.menu_names
+  where trans_list.trans_date = '2024-07-02'
+);
+  
+--to see which staff is working on which day --
+select
+  staff.staff_id,
+  staff.names as s_name,
+  trans_list.trans_date as workday
+from trans_list 
+join staff on trans_list.staff_id = staff.staff_id
+where trans_list.trans_date = '2024-07-02';
+
+
+
+
+select 
+      trans_list.trans_date as date,
+      menu.menu_names,
+      menu.menu_price,
+      trans_list.quantity, 
+      menu.menu_price * trans_list.quantity as total
+  from menu
+  join trans_list on 
+  menu.menu_names = trans_list.menu_names;
